@@ -1,7 +1,7 @@
 // src/App.js
 
-import React, {useContext} from 'react';
-import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import JobList from './components/JobList';
 import JobForm from './components/JobForm';
 import CompanyList from './components/CompanyList';
@@ -10,23 +10,37 @@ import Navigation from './components/Navigation';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import {AuthContext, AuthProvider} from "./context/AuthContext";
+import { AuthContext, AuthProvider } from "./context/AuthContext";
+import Loading from './components/Loading';
 
-function PrivateRoute({children}) {
-    const {user} = useContext(AuthContext);
-    return user ? children : <Navigate to="/login"/>;
+// Component to protect private routes
+function PrivateRoute({ children }) {
+    const { user, loading } = useContext(AuthContext);
 
+    if (loading) {
+        return <Loading/>; // Display loading spinner or message
+    }
+
+    return user ? <>{children}</> : <Navigate to="/login" />;
 }
-function AuthRedirect({children}) {
-    const {user} = useContext(AuthContext);
-    return user ? <Navigate to="/dashboard"/> : children;
+
+// Component to redirect authenticated users away from login/register
+function AuthRedirect({ children }) {
+    const { user, loading } = useContext(AuthContext);
+
+    if (loading) {
+        return <Loading/>; // Display loading spinner or message
+    }
+
+    return user ? <Navigate to="/dashboard" /> : children;
 }
+
 function App() {
     return (
         <AuthProvider>
             <Router>
                 <div className="App">
-                    <Navigation/>
+                    <Navigation />
                     <Routes>
                         <Route path="/login" element={
                             <AuthRedirect>
@@ -36,6 +50,11 @@ function App() {
                         <Route path="/register" element={
                             <AuthRedirect>
                                 <Register />
+                            </AuthRedirect>
+                        } />
+                        <Route path="/" element={
+                            <AuthRedirect>
+                                <Login />
                             </AuthRedirect>
                         } />
                         <Route path="/dashboard" element={

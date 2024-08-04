@@ -24,6 +24,6 @@ export const logout = () => {
     return axios.post(`${API_URL}/logout`);
 };
 
-export const getUser = () => {
-    return axios.get(`${API_URL}/user`);
+export const getUser = async () => {
+    return await axios.get(`${API_URL}/user`);
 };

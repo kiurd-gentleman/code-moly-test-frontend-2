@@ -1,8 +1,9 @@
-// src/components/JobForm.js
+import React, { useState, useEffect } from 'react';
+import axios from './../config/axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { TagsInput } from "react-tag-input-component";
+import { Card, CardBody, CardTitle } from 'react-bootstrap';
 
-import React, {useState, useEffect} from 'react';
-import axios from 'axios';
-import {useNavigate, useParams} from 'react-router-dom';
 
 function JobForm() {
     const [job, setJob] = useState({
@@ -14,151 +15,191 @@ function JobForm() {
         salary_max: '',
         experience_level: '',
         industry: '',
-        benefits: '',
-        skills: ''
+        benefits: [],
+        skills: []
     });
     const [companies, setCompanies] = useState([]);
-    const {id} = useParams();
+    const { id } = useParams();
     const navigate = useNavigate();
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/companies')
+        axios.get('/companies')
             .then(response => setCompanies(response.data));
-
         if (id) {
-            axios.get(`http://localhost:8000/api/jobs/${id}`)
+            axios.get(`/jobs/${id}`)
                 .then(response => {
-                    const jobData = response.data;
-                    setJob({
-                        ...jobData,
-                        benefits: jobData.benefits.join(', '),
-                        skills: jobData.skills.join(', ')
-                    });
+                    setJob(response.data);
                 });
         }
     }, [id]);
 
     const handleChange = (e) => {
-        setJob({...job, [e.target.name]: e.target.value});
+        // console.log(e.target.value);
+        setJob({ ...job, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const jobData = {
-            ...job,
-            benefits: job.benefits.split(',').map(b => b.trim()),
-            skills: job.skills.split(',').map(s => s.trim())
+            ...job
         };
 
         if (id) {
-            axios.put(`http://localhost:8000/api/jobs/${id}`, jobData)
-                // .then(() => navigate('/jobs'));
+            axios.put(`/jobs/${id}`, jobData)
+            .then(() => navigate('/jobs'))
+            .catch(error => {
+                setError(error.response.data.errors);
+                console.error('Job update error', error);
+            });
+            // .then(() => navigate('/jobs'));
         } else {
-            axios.post('http://localhost:8000/api/jobs', jobData)
-                // .then(() => navigate('/jobs'));
+            axios.post('/jobs', jobData)
+            .then(() => navigate('/jobs'))
+            .catch(error => {
+                setError(error.response.data.errors);
+                console.error('Job create error', error);
+            });
+            // .then(() => navigate('/jobs'));
         }
     };
 
     return (
-        <div>
-            <h2>{id ? 'Edit' : 'Create'} Job</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={job.title}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Company</label>
-                    <select
-                        name="company_id"
-                        value={job.company_id}
-                        onChange={handleChange}
-                    >
-                        <option value="">Select Company</option>
-                        {companies.map(company => (
-                            <option key={company.id} value={company.id}>{company.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>Location</label>
-                    <input
-                        type="text"
-                        name="location"
-                        value={job.location}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Type</label>
-                    <input
-                        type="text"
-                        name="type"
-                        value={job.type}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Salary Min</label>
-                    <input
-                        type="number"
-                        name="salary_min"
-                        value={job.salary_min}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Salary Max</label>
-                    <input
-                        type="number"
-                        name="salary_max"
-                        value={job.salary_max}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Experience Level</label>
-                    <input
-                        type="number"
-                        name="experience_level"
-                        value={job.experience_level}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Industry</label>
-                    <input
-                        type="text"
-                        name="industry"
-                        value={job.industry}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Benefits</label>
-                    <input
+        <div className="container mx-auto">
+            <div className="mt-5 w-50 mx-auto">
+                <Card className="border-0 mt-5" style={{ backgroundColor: 'rgb(237 237 237)' }}>
+                    <CardBody>
+                        <CardTitle>{id ? 'Edit' : 'Create'} Job</CardTitle>
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                <label className="form-label">Title</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="title"
+                                    value={job.title}
+                                    onChange={handleChange}
+                                />
+                                {error.title && <p className="text-danger">{error.title[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Company</label>
+                                <select
+                                    className="form-control"
+                                    name="company_id"
+                                    value={job.company_id}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select Company</option>
+                                    {companies.map(company => (
+                                        <option key={company.id} value={company.id}>{company.name}</option>
+                                    ))}
+                                </select>
+                                {error.company_id && <p className="text-danger">{error.company_id[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Location</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="location"
+                                    value={job.location}
+                                    onChange={handleChange}
+                                />
+                                {error.location && <p className="text-danger">{error.location[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Type</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="type"
+                                    value={job.type}
+                                    onChange={handleChange}
+                                />
+                                {error.type && <p className="text-danger">{error.type[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Salary Min</label>
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    name="salary_min"
+                                    value={job.salary_min}
+                                    onChange={handleChange}
+                                />
+                                {error.salary_min && <p className="text-danger">{error.salary_min[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Salary Max</label>
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    name="salary_max"
+                                    value={job.salary_max}
+                                    onChange={handleChange}
+                                />
+                                {error.salary_max && <p className="text-danger">{error.salary_max[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Experience Level</label>
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    name="experience_level"
+                                    value={job.experience_level}
+                                    onChange={handleChange}
+                                />
+                                {error.experience_level && <p className="text-danger">{error.experience_level[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Industry</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="industry"
+                                    value={job.industry}
+                                    onChange={handleChange}
+                                />
+                                {error.industry && <p className="text-danger">{error.industry[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Benefits</label>
+                                {/* <input
                         type="text"
                         name="benefits"
                         value={job.benefits}
                         onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Skills</label>
-                    <input
+                    /> */}
+                                <TagsInput
+                                    value={job.benefits}
+                                    onChange={(tags) => setJob({ ...job, benefits: tags })}
+                                    name="benefits"
+                                    placeHolder="enter benefits"
+                                />
+                                {error.benefits && <p className="text-danger">{error.benefits[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Skills</label>
+                                <TagsInput
+                                    value={job.skills}
+                                    onChange={(tags) => setJob({ ...job, skills: tags })}
+                                    name="skills"
+                                    placeHolder="enter skills"
+                                />
+                                {error.skills && <p className="text-danger">{error.skills[0]}</p>}
+                                {/* <input
                         type="text"
                         name="skills"
                         value={job.skills}
                         onChange={handleChange}
-                    />
-                </div>
-                <button type="submit">{id ? 'Update' : 'Create'}</button>
-            </form>
+                    /> */}
+                            </div>
+                            <button className="btn btn-dark mt-3" type="submit">{id ? 'Update' : 'Create'}</button>
+                        </form>
+                    </CardBody>
+                </Card>
+            </div>
         </div>
     );
 }

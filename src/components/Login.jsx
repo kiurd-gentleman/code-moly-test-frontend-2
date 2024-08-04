@@ -1,16 +1,17 @@
 // src/components/Login.js
 
-import React, {useState, useContext} from 'react';
-import {login} from '../services/authService';
-import {AuthContext} from '../context/AuthContext';
-import {useNavigate} from 'react-router-dom';
-import {Card} from "react-bootstrap";
+import React, { useState, useContext } from 'react';
+import { login } from '../services/authService';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Card } from "react-bootstrap";
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {setUser} = useContext(AuthContext);
+    const { setUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -19,6 +20,7 @@ function Login() {
             setUser(response.data.user);
             navigate('/dashboard');
         }).catch(error => {
+            setError(error.response.data.errors);
             console.error('Login error', error);
         });
     };
@@ -26,7 +28,7 @@ function Login() {
     return (
         <div className="container mx-auto">
             <div className="mt-5 w-50 mx-auto">
-                <Card className="border-0 mt-5" style={{backgroundColor: 'rgb(237 237 237)'}}>
+                <Card className="border-0 mt-5" style={{ backgroundColor: 'rgb(237 237 237)' }}>
                     <Card.Body>
                         <Card.Title className="text-center">Signup to your Account</Card.Title>
                         {/*<h2>Login</h2>*/}
@@ -39,6 +41,7 @@ function Login() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
+                                {error.email && <p className="text-danger">{error.email[0]}</p>}
                             </div>
                             <div>
                                 <label className="form-label">Password</label>
@@ -48,6 +51,7 @@ function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+                                {error.password && <p className="text-danger">{error.password[0]}</p>}
                             </div>
                             <button className="btn btn-dark mt-3" type="submit">Login</button>
                             {/*//if you have an account then login*/}
