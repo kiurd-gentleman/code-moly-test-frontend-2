@@ -1,5 +1,3 @@
-// src/components/Navigation.js
-
 import React, {useContext} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {Container, Nav, Navbar} from "react-bootstrap";
@@ -14,7 +12,7 @@ function Navigation() {
     };
 
     return (
-        <Navbar>
+        <Navbar bg="dark" data-bs-theme="dark">
             <Container>
                 <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
                 <Navbar>

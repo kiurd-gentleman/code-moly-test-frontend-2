@@ -3,6 +3,7 @@ import axios from './../config/axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TagsInput } from "react-tag-input-component";
 import { Card, CardBody, CardTitle } from 'react-bootstrap';
+import { getJobTypes, getCategory } from '../services/JobService';
 
 
 function JobForm() {
@@ -10,7 +11,8 @@ function JobForm() {
         title: '',
         company_id: '',
         location: '',
-        type: '',
+        job_type_id: '',
+        category_id: '',
         salary_min: '',
         salary_max: '',
         experience_level: '',
@@ -22,6 +24,9 @@ function JobForm() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [jobTypes, setJobTypes] = useState([]);
+    const [category, setCategory] = useState([]);
+
 
     useEffect(() => {
         axios.get('/companies')
@@ -33,6 +38,18 @@ function JobForm() {
                 });
         }
     }, [id]);
+
+    useEffect(() => {
+        getJobTypes().then(response => {
+            setJobTypes(response.data);
+        });
+    }, []);
+
+    useEffect(() => {
+        getCategory().then(response => {
+            setCategory(response.data);
+        });
+    }, []);
 
     const handleChange = (e) => {
         // console.log(e.target.value);
@@ -47,19 +64,19 @@ function JobForm() {
 
         if (id) {
             axios.put(`/jobs/${id}`, jobData)
-            .then(() => navigate('/jobs'))
-            .catch(error => {
-                setError(error.response.data.errors);
-                console.error('Job update error', error);
-            });
+                .then(() => navigate('/jobs'))
+                .catch(error => {
+                    setError(error.response.data.errors);
+                    console.error('Job update error', error);
+                });
             // .then(() => navigate('/jobs'));
         } else {
             axios.post('/jobs', jobData)
-            .then(() => navigate('/jobs'))
-            .catch(error => {
-                setError(error.response.data.errors);
-                console.error('Job create error', error);
-            });
+                .then(() => navigate('/jobs'))
+                .catch(error => {
+                    setError(error.response.data.errors);
+                    console.error('Job create error', error);
+                });
             // .then(() => navigate('/jobs'));
         }
     };
@@ -109,15 +126,34 @@ function JobForm() {
                                 {error.location && <p className="text-danger">{error.location[0]}</p>}
                             </div>
                             <div>
-                                <label className="form-label">Type</label>
-                                <input
+                                <label className="form-label">Job Type</label>
+                                <select
                                     className="form-control"
-                                    type="text"
-                                    name="type"
-                                    value={job.type}
+                                    name="job_type_id"
+                                    value={job.job_type_id}
                                     onChange={handleChange}
-                                />
-                                {error.type && <p className="text-danger">{error.type[0]}</p>}
+                                >
+                                    <option value="">Select Job Type</option>
+                                    {jobTypes.map(jobType => (
+                                        <option key={jobType.id} value={jobType.id}>{jobType.name}</option>
+                                    ))}
+                                </select>
+                                {error.job_type_id && <p className="text-danger">{error.job_type_id[0]}</p>}
+                            </div>
+                            <div>
+                                <label className="form-label">Category</label>
+                                <select
+                                    className="form-control"
+                                    name="category_id"
+                                    value={job.category_id}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select Category</option>
+                                    {category.map(category => (
+                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                    ))}
+                                </select>
+                                {error.category_id && <p className="text-danger">{error.category_id[0]}</p>}
                             </div>
                             <div>
                                 <label className="form-label">Salary Min</label>

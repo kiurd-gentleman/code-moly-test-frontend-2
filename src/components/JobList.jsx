@@ -36,8 +36,10 @@ function JobList() {
                             {jobs && jobs.map(job => (
                                 <li key={job.id} class="list-group-item border-0 d-flex justify-content-between align-items-start">
                                     <div class="ms-2 me-auto">
-                                        <div class="fw-bold">{job.title}</div>
-                                        {job.company.name}
+                                        <div class="fw-bold">{job.title} ({job.salary_min}$ - {job.salary_max}$)</div>
+                                        <small>{job.type}</small>
+                                        
+                                        <div>Company: {job.company.name}</div>
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                         <Link className="btn btn-info btn-sm" to={`/jobs/${job.id}`}>Details</Link>
