@@ -133,8 +133,8 @@ function JobList() {
                                                     <td>{job.title}</td>
                                                     <td>{job.location}</td>
                                                     <td>{job.company.name}</td>
-                                                    <td>{job.salary}</td>
-                                                    <td>{job.type}</td>
+                                                    <td>{job.salary_min}$ - {job.salary_max}$</td>
+                                                    <td>{job.job_type.name}</td>
                                                     <td>
                                                         <Link to={`/jobs/${job.id}`} className="btn btn-sm btn-primary">View</Link>
                                                     </td>
