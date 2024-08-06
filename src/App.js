@@ -10,6 +10,7 @@ import Navigation from './components/Navigation';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import JobDetails from './components/JobDetails';
 import { AuthContext, AuthProvider } from "./context/AuthContext";
 import Loading from './components/Loading';
 
@@ -70,6 +71,11 @@ function App() {
                         <Route path="/jobs/:id/edit" element={
                             <PrivateRoute>
                                 <JobForm />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/jobs/:id" element={
+                            <PrivateRoute>
+                                <JobDetails />
                             </PrivateRoute>
                         } />
                         <Route path="/jobs" element={

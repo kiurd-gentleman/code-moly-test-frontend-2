@@ -1,0 +1,52 @@
+.job-details {
+    padding: 20px;
+    /* border: 0px solid #ddd; */
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+.job-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.job-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.company-name {
+    font-size: 18px;
+    color: #555;
+}
+
+.job-info p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+.job-info p strong {
+    color: #333;
+}
+
+.job-description {
+    margin-top: 20px;
+}
+
+.job-description h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.job-description p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+}

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../config/axios';
 import { Card, CardBody } from 'react-bootstrap';
 import { getJobTypes, getCategory } from '../services/JobService';
 
@@ -10,10 +10,7 @@ function JobList() {
     const [jobs, setJobs] = useState([]);
     const [jobTypes, setJobTypes] = useState([]);
     const [category, setCategory] = useState([]);
-    const [search, setSearch] = useState({
-        category_id: '',
-        job_type_id: '',
-    });
+    const [search, setSearch] = useState({});
 
     useEffect(() => {
         getJobTypes().then(response => {
@@ -30,6 +27,15 @@ function JobList() {
         // console.log(e.target.value);
         setSearch({ ...search, [e.target.name]: e.target.value });
     };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.get('/jobs', { params: search }).then(response => {
+            setJobs(response.data);
+        });
+    }
+
+
     return (
         <div className="container mx-auto">
             <div className="mt-5 mx-auto">
@@ -44,11 +50,12 @@ function JobList() {
                             <p>To visit job list please go to the Job List</p>
                         </div>
                         <div className="mt-5">
-                            <form>
+                            <form onSubmit={handleSubmit}>
                                 <div className="row">
                                     <div className="form-group col-md-4">
                                         <label className="form-label" htmlFor="search">Search</label>
                                         <input type="text"
+                                            name='search'
                                             className="form-control"
                                             id="search"
                                             placeholder="Search"
@@ -85,19 +92,19 @@ function JobList() {
                                     </div>
                                     <div className="form-group col-md-3">
                                         <label className="form-label">Salary Range</label>
-                                        <div class="input-group mb-3">
+                                        <div className="input-group mb-3">
                                             <input type="text"
                                                 onChange={handleChange}
-                                                class="form-control"
+                                                className="form-control"
                                                 name="min_salary"
                                                 placeholder="Min Salary"
                                                 aria-label="min_salary"
                                             />
-                                            <span class="input-group-text">-</span>
+                                            <span className="input-group-text">-</span>
                                             <input type="text"
                                                 onChange={handleChange}
                                                 name="max_salary"
-                                                class="form-control"
+                                                className="form-control"
                                                 placeholder="Max Salary"
                                                 aria-label="max_salary"
                                             />
@@ -121,11 +128,11 @@ function JobList() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {jobs.map((job) => (
+                                            {jobs.data && jobs.data.map((job) => (
                                                 <tr key={job.id}>
                                                     <td>{job.title}</td>
                                                     <td>{job.location}</td>
-                                                    <td>{job.company}</td>
+                                                    <td>{job.company.name}</td>
                                                     <td>{job.salary}</td>
                                                     <td>{job.type}</td>
                                                     <td>

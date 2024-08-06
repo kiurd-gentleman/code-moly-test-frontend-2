@@ -18,7 +18,8 @@ function JobForm() {
         experience_level: '',
         industry: '',
         benefits: [],
-        skills: []
+        skills: [],
+        description: ''
     });
     const [companies, setCompanies] = useState([]);
     const { id } = useParams();
@@ -224,12 +225,16 @@ function JobForm() {
                                     placeHolder="enter skills"
                                 />
                                 {error.skills && <p className="text-danger">{error.skills[0]}</p>}
-                                {/* <input
-                        type="text"
-                        name="skills"
-                        value={job.skills}
-                        onChange={handleChange}
-                    /> */}
+                            </div>
+                            <div>
+                                <label className="form-label">Description</label>
+                                <textarea
+                                    className="form-control"
+                                    name="description"
+                                    value={job.description}
+                                    onChange={handleChange}
+                                />
+                                {error.description && <p className="text-danger">{error.description[0]}</p>}
                             </div>
                             <button className="btn btn-dark mt-3" type="submit">{id ? 'Update' : 'Create'}</button>
                         </form>
