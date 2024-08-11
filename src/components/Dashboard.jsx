@@ -25,7 +25,33 @@ function JobList() {
     }, []);
     const handleChange = (e) => {
         // console.log(e.target.value);
-        setSearch({ ...search, [e.target.name]: e.target.value });
+        // if job type is selected then set job type id
+        // if category is selected then set category id
+        // if salary is entered then set min_salary and max_salary
+
+
+        console.log(e.target.value == '' ? 'null' : 'not null');
+        setSearch({ ...search, [e.target.name]: e.target.value == '' ? null : e.target.value });
+
+        // only if job type , category, salary range null or empty string then remove from search object
+
+        if (e.target.name === 'job_type_id' && e.target.value === '') {
+            delete search[e.target.name];
+        }
+
+        if (e.target.name === 'category_id' && e.target.value === '') {
+            delete search[e.target.name];
+        }
+
+        if (e.target.name === 'min_salary' && e.target.value === '') {
+            delete search[e.target.name];
+        }
+
+        if (e.target.name === 'max_salary' && e.target.value === '') {
+            delete search[e.target.name];
+        }
+
+
     };
 
     const handleSubmit = (e) => {
@@ -122,6 +148,8 @@ function JobList() {
                                                 <th scope="col">Title</th>
                                                 <th scope="col">Location</th>
                                                 <th scope="col">Company</th>
+                                                <th scope='col'> Category</th>
+                                                <th scope='col'>Job Type</th>
                                                 <th scope="col">Salary</th>
                                                 <th scope="col">Type</th>
                                                 <th scope="col">Action</th>
@@ -133,6 +161,8 @@ function JobList() {
                                                     <td>{job.title}</td>
                                                     <td>{job.location}</td>
                                                     <td>{job.company.name}</td>
+                                                    <td>{job.category.name}</td>
+                                                    <td>{job.job_type.name}</td>
                                                     <td>{job.salary_min}$ - {job.salary_max}$</td>
                                                     <td>{job.job_type.name}</td>
                                                     <td>
